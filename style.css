@@ -25,11 +25,12 @@ input:hover, button:hover{
 		padding:20px;
 	}
 }
+
 @media (min-device-width:800px){
 	#header{
-		width:42%;
+		width:50%;
 		left:50%;
-		margin-left:-21%;
+		margin-left:-25%;
 		position:fixed;
 	}
 	.top_button a{
@@ -49,16 +50,6 @@ input:hover, button:hover{
 	background:rgba(11,11,11,0.6);
 	display:none;
 }
-#fence{
-	position:fixed;
-	width:100%;
-	height:100%;
-	z-index:100;
-	background:rgba(170,99,0,0.6);
-	display:none;
-	padding:0;
-	margin:0;
-}
 #popup{
 	z-index:1100;
 	position:fixed;
@@ -68,7 +59,6 @@ input:hover, button:hover{
 	margin-left:-100px;
 	background:#fff;
 	border:1px solid black;
-	color:black;
 	text-align:center;
 }
 .button:hover{
@@ -94,7 +84,7 @@ td a{
 td a:visited{	
 	color:#b50;
 }
-table{
+table,#stats_container{
 	background:#555;
 	border-collapse: collapse; 
 	border-spacing: 0px; 
@@ -102,7 +92,7 @@ table{
 	padding:0;
 	margin: 0 auto;
 	margin-top:50px;
-	font-size:100% !important;
+	font-size:100%;
 }
 body{
 	font-size:1vw;
@@ -172,8 +162,8 @@ p{
 }
 #mainpage_container table{
 	width:40%;
-	font-size:100%;
 }
+
 
 .transes{
 	margin:0;
@@ -186,6 +176,7 @@ p{
 	background:#666;
 	color:#aaa;
 }
+
 
 .blink{
   -webkit-animation: blink 3s linear infinite;
@@ -227,48 +218,11 @@ p{
 	}
 }
 
-/* ALLWORDS */
-#edit_form_div{
-	position:fixed;
-	left:50%;
-	top:40%;
-	margin-left:-222px;
-	width:444px;
-	display:none;
-	background:#777;
-	border:3px solid #333;
-	z-index:200;
+@media screen and (max-device-width: 767px){
+	body{
+		font-size:1.4vw;
+	}
 }
-#edit_form input[type=text]{
-	width:160px;
-}
-#allwords_table td{
-	border-bottom:1px solid black;
-	border-left:1px solid black;
-	background:rgba(11,11,11,0.0);
-	-webkit-transition: all .5s linear;
-}
-#allwords_table td a{
-	color:innerhit;
-}
-#allwords_table .hat .active{
-	border:1px solid white;
-	border-top:none;
-	background:rgba(255,255,255,0.3);
-}
-#allwords_table .hat td{
-	cursor:pointer;
-}
-#allwords_table .hat td:hover{
-	background:rgba(255,125,0,0.7);
-	border:1px solid #f90;
-}
-#allwords_table tr:target td{
-	//border:2px solid #999;
-	background:rgba(11,11,11,0.6);
-	top:10%;
-}
-
 
 /* fixes and helpers */
 a > img { border: 0 none !important; }

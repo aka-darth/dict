@@ -10,18 +10,13 @@ if($user){
 			$langs[$lang['id']]=$lang;
 		}
 	}
+	//print_r($langs);
 	if(count($langs)==0 and $page!="langs"){
 		?>
 	<script>
-		document.location.href='<?echo $config['path'];?>/langs.php';
+		document.location.href='http://shcoding.esy.es/dict/langs.php';
 	</script>
 		<?
-	}else if(!mysql_num_rows(mysql_query("SELECT * FROM dt_W_".$user['id'])) and $_SERVER['SCRIPT_NAME']!='/index.php'){
-		?>
-	<script>
-		document.location.href='<?echo $config['path'];?>/';
-	</script>
-		<?		
 	}
 }
 ?>
@@ -85,6 +80,8 @@ if($user){
 	</head>
 	<body onclick="window.moveTo(0,0);">
 	
+	 <!-- Yandex.Metrika counter --><script type="text/javascript"> (function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter27152960 = new Ya.Metrika({ id:27152960, webvisor:true, trackHash:true }); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks");</script><noscript><div><img src="//mc.yandex.ru/watch/27152960" style="position:absolute; left:-9999px;" alt="" /></div></noscript><!-- /Yandex.Metrika counter -->
+	
 	<?if(!$user){?>
 Для регистрации просто введите свой логин и пароль.(занятые логины черного цвета,не занятые - серого)<br>
 Можно зайти прямо сейчас,логин login и пароль password уже введены,надо просто нажать кнопку.<br>
@@ -109,10 +106,10 @@ if($user){
 	}else{?>
 		<div id="header">
 			<div class="top_button" <?if($page=="main"){echo "id='top_but_selected'";}?>>
-				<a href="./">Add</a>
+				<a href="../dict/">Add</a>
 			</div>
 			<div class="top_button" <?if($page=="many"){echo "id='top_but_selected'";}?>>
-				<a href="add_many.php">Fill</a>
+				<a href="../dict/add_many.php">Fill</a>
 			</div>
 			<div class="top_button" <?if($page=="all"){echo "id='top_but_selected'";}?>>
 				<a href="allwords.php">Allwords</a>
@@ -122,6 +119,9 @@ if($user){
 			</div>
 			<div class="top_button" <?if($page=="langs"){echo "id='top_but_selected'";}?>>
 				<a href="langs.php">Langs</a>
+			</div>
+			<div class="top_button" <?if($page=="stats"){echo "id='top_but_selected'";}?>>
+				<a href="stats.php">Stats</a>
 			</div>
 			<div class="top_button" style="display:none;" <?if($page=="settings"){echo "id='top_but_selected'";}?>>
 				<a href="#">Settings</a>

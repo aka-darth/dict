@@ -2,12 +2,6 @@
 $title="Добавить слово";
 include "top.php";?>
 <script>
-function popup(html){
-	var popup=document.getElementById('popup');
-	popup.innerHTML='<input type="button" value="X" onclick="document.getElementById(\'fence\').style.display=\'none\';" style="float:right;width:30px;height:30px;border-radius:15px;font-weght:bold;"><br>'+html;
-	document.getElementById('fence').style.display='block';
-
-}
 function callbackfunction(root){
 /*	for(key in root){
 		console.log(key+' '+root[key]+' l:1');
@@ -29,18 +23,18 @@ function callbackfunction(root){
 			var target=1;
 		}else{
 			var popup=document.getElementById('popup');
-			popup.innerHTML='<input type="button" value="X" onclick="document.getElementById(\'fence\').style.display=\'none\';" style="float:right;width:30px;height:30px;border-radius:15px;font-weght:bold;"><br>Не знаю,куда вставить';
+			popup.innerHTML='<input type="button" value="X" onclick="document.getElementById(\'popup_wrap\').style.display=\'none\';" style="float:right;width:30px;height:30px;border-radius:15px;font-weght:bold;"><br>Не знаю,куда вставить';
 			return false;
 		}
 		if(root.def[0].tr.length>1){
 			var popup=document.getElementById('popup');
-			popup.innerHTML='<input type="button" value="X" onclick="document.getElementById(\'fence\').style.display=\'none\';" style="float:right;width:30px;height:30px;border-radius:15px;font-weght:bold;">';
+			popup.innerHTML='<input type="button" value="X" onclick="document.getElementById(\'popup_wrap\').style.display=\'none\';" style="float:right;width:30px;height:30px;border-radius:15px;font-weght:bold;">';
 			for(var i=0;i<root.def[0].tr.length;i++){
-				popup.innerHTML+="<input type='button' value='"+root.def[0].tr[i].text+"' onclick='document.getElementById(\"fence\").style.display=\"none\";document.getElementById(\"word"+target+"\").value=\""+
+				popup.innerHTML+="<input type='button' value='"+root.def[0].tr[i].text+"' onclick='document.getElementById(\"popup_wrap\").style.display=\"none\";document.getElementById(\"word"+target+"\").value=\""+
 				root.def[0].tr[i].text.toLowerCase()+"\"'><br>";
 				console.log(root.def[0].tr[i].text);
 			}
-			document.getElementById('fence').style.display="block";
+			document.getElementById('popup_wrap').style.display="block";
 		}else{
 			document.getElementById('word'+target).value=root.def[0].tr[0].text.toLowerCase();
 		}
@@ -72,10 +66,14 @@ function getYandex(word){
 			word=document.getElementById('word2').value;
 			var lang=lang2+"-"+lang1;
 		}else{
-			popup('Введите слово!');
+			var popup=document.getElementById('popup');
+			popup.innerHTML='<input type="button" value="X" onclick="document.getElementById(\'popup_wrap\').style.display=\'none\';" style="float:right;width:30px;height:30px;border-radius:15px;font-weght:bold;"><br>Для того чтобы перевести слово,надо ввести слово в одно из полей.';
 			return false;
 		}
 	}
+
+	
+	
 	var script=document.createElement('script');
 	script.type="text/javascript";
 	//["ru-ru","ru-en","ru-pl","ru-uk","ru-de","ru-fr","ru-es","ru-it","ru-tr","en-ru","en-en","en-de","en-fr","en-es","en-it","en-tr","pl-ru","uk-ru","de-ru","de-en","fr-ru","fr-en","es-ru","es-en","it-ru","it-en","tr-ru","tr-en"]
@@ -88,7 +86,7 @@ function getYandex(word){
 	return false;
 }
 </script>
-<div id="fence">
+<div id="popup_wrap">
 	<div id="popup">
 	</div>
 </div>

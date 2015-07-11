@@ -1,6 +1,7 @@
 ﻿<?$page="all";
 $title="Словарь: слова";
 include "top.php";
+include "../mysql.php";
 $filter=array();
 //Тут надо перевести всё это дело на куки
 if($_GET['opened']){
@@ -29,6 +30,58 @@ if($_GET['active']){
 	$filter['active']="both";
 }
 ?>
+<style>
+	#edit_form_div{
+		position:fixed;
+		left:50%;
+		top:40%;
+		margin-left:-222px;
+		width:444px;
+		display:none;
+		background:#777;
+		border:3px solid #333;
+		z-index:200;
+	}
+	#edit_form input[type=text]{
+		width:160px;
+	}
+	#fence{
+		position:fixed;
+		width:100%;
+		height:100%;
+		z-index:100;
+		background:rgba(170,99,0,0.6);
+		display:none;
+		padding:0;
+		margin:0;
+	}
+	td{
+		border-bottom:1px solid black;
+		border-left:1px solid black;
+		background:rgba(11,11,11,0.0);
+		-webkit-transition: all .5s linear;
+	}
+	td a{
+		color:innerhit;
+	}
+	.hat .active{
+		border:1px solid white;
+		border-top:none;
+		background:rgba(255,255,255,0.3);
+	}
+	.hat td{
+		cursor:pointer;
+	}
+	.hat td:hover{
+		background:rgba(255,125,0,0.7);
+		border:1px solid #f90;
+	}
+	tr:target td{
+		//border:2px solid #999;
+		background:rgba(11,11,11,0.6);
+		top:10%;
+	}
+</style>
 <script>
 	function set_activity(id,that){
 		xhr_send('activity.php?id='+id+'&enabled='+that.value,function(response){
@@ -49,15 +102,15 @@ if($_GET['active']){
 		save_parameter();
 	}
 	function show_filter(){
+		var filter=document.getElementsByClassName('filter');
+		for(var i=0;i<filter.length;i++){
+			filter[i].style.display=(filter[i].style.display=='none')?('table-row'):('none');
+		}
 		var filter=document.getElementsByClassName('hat');
 		for(var i=0;i<filter.length;i++){
 			filter[i].style.display=(filter[i].style.display=='none')?('table-row'):('none');
 		}
-/*		var filter=document.getElementsByClassName('filter');
-		for(var i=0;i<filter.length;i++){
-			filter[i].style.display=(filter[i].style.display=='none')?('table-row'):('none');
-		}
-*/	}
+	}
 	function save_parameter(){
 		var word=document.getElementById("which_word").value;
 		var lang=document.getElementById("lang").value;
@@ -79,7 +132,7 @@ if($_GET['active']){
 				var active="both";
 			}
 		}
-		var url='<?echo $config['path'];?>/allwords.php?sort='+sort+'&opened='+opened+'&word='+word+'&lang='+lang+"&search="+search+"&active="+active;
+		var url='http://shcoding.esy.es/dict/allwords.php?sort='+sort+'&opened='+opened+'&word='+word+'&lang='+lang+"&search="+search+"&active="+active;
 		document.location.href=url;
 	}
 	function edit(num){
@@ -106,7 +159,7 @@ if($_GET['active']){
 		}
 	}
 	function try_edit(){
-		var url=<?echo $config['path'];?>"/edit_word.php";
+		var url="http://shcoding.esy.es/dict/edit_word.php";
 		var xhr = new XMLHttpRequest();
 		var form=document.getElementById('edit_form');
 		var data='from=web';
@@ -213,98 +266,98 @@ if($_GET['active']){
 	
 	
 <input type='hidden' id='sort' value='<?echo $_GET['sort'];?>'>
-	<table id="allwords_table">
+	<table>
 		<tr class='hat' <?if($filter['opened']){echo "style='display:none;'";}?>>
-			<td <?
+			<td onclick="sort('<?
 			if($_GET['sort']=="n_up"){
-				echo 'onclick="sort(\'n_down\');" class="active"> &#8593; ';
+				echo 'n_down\');" class="active"> &#8593; ';
 			}else if($_GET['sort']=="n_down"){
-				echo 'onclick="sort(\'n_up\');" class="active"> &#8595; ';
+				echo 'n_up\');" class="active"> &#8595; ';
 			}else{
-				echo 'onclick="sort(\'n_down\');" >';
+				echo 'n_down\');" >';
 			}
 			?>№</td>
-			<td <?
+			<td onclick="sort('<?
 			if($_GET['sort']=="w_up"){
-				echo 'onclick="sort(\'w_down\');" class="active"> &#8593; ';
+				echo 'w_down\');" class="active"> &#8593; ';
 			}else if($_GET['sort']=="w_down"){
-				echo 'onclick="sort(\'w_up\');" class="active"> &#8595; ';
+				echo 'w_up\');" class="active"> &#8595; ';
 			}else{
-				echo 'onclick="sort(\'w_down\');">';
+				echo 'w_down\');">';
 			}
 			?>Слово </td>
-			<td <?
+			<td onclick="sort('<?
 			if($_GET['sort']=="l_up"){
-				echo 'onclick="sort(\'l_down\');" class="active"> &#8593; ';
+				echo 'l_down\');" class="active"> &#8593; ';
 			}else if($_GET['sort']=="l_down"){
-				echo 'onclick="sort(\'l_up\');" class="active"> &#8595; ';
+				echo 'l_up\');" class="active"> &#8595; ';
 			}else{
-				echo 'onclick="sort(\'l_down\');">';
+				echo 'l_down\');">';
 			}
 			?>Язык</td>
 			<td>Переводы</td>
-			<td <?
+			<td onclick="sort('<?
 			if($_GET['sort']=="s_up"){
-				echo 'onclick="sort(\'s_down\');" class="active"> &#8593; ';
+				echo 's_down\');" class="active"> &#8593; ';
 			}else if($_GET['sort']=="s_down"){
-				echo 'onclick="sort(\'s_up\');" class="active"> &#8595; ';
+				echo 's_up\');" class="active"> &#8595; ';
 			}else{
-				echo 'onclick="sort(\'s_down\');">';
+				echo 's_down\');">';
 			}
 			?>Статистика</td>
-			<td <?
+			<td  onclick="sort('<?
 			if($_GET['sort']=="c_up"){
-				echo 'onclick="sort(\'c_down\');" class="active"> &#8593; ';
+				echo 'c_down\');" class="active"> &#8593; ';
 			}else if($_GET['sort']=="c_down"){
-				echo 'onclick="sort(\'c_up\');" class="active"> &#8595; ';
+				echo 'c_up\');" class="active"> &#8595; ';
 			}else{
-				echo 'onclick="sort(\'c_down\');">';
+				echo 'c_down\');">';
 			}
 			?>Изучивается<br>Да / Нет</td>
 			<td onclick="show_filter();">Показать фильтр</td>
 		</tr>
-		<tr class='filter hat' <?if(!$filter['opened']){echo "style='display:none;'";}?>>
-			<td class='button' <?
+		<tr class='filter' <?if(!$filter['opened']){echo "style='display:none;'";}?>>
+			<td class='button' onclick="sort('<?
 			if($_GET['sort']=="n_up"){
-				echo 'onclick="sort(\'n_down\');" class="active"> &#8593; ';
+				echo 'n_down\');" class="active"> &#8593; ';
 			}else if($_GET['sort']=="n_down"){
-				echo 'onclick="sort(\'n_up\');" class="active"> &#8595; ';
+				echo 'n_up\');" class="active"> &#8595; ';
 			}else{
-				echo 'onclick="sort(\'n_down\');" >';
+				echo 'n_down\');" >';
 			}
 			?>№</td>
-			<td class='button' <?
+			<td class='button' onclick="sort('<?
 			if($_GET['sort']=="w_up"){
-				echo 'onclick="sort(\'w_down\');" class="active"> &#8593; ';
+				echo 'w_down\');" class="active"> &#8593; ';
 			}else if($_GET['sort']=="w_down"){
-				echo 'onclick="sort(\'w_up\');" class="active"> &#8595; ';
+				echo 'w_up\');" class="active"> &#8595; ';
 			}else{
-				echo 'onclick="sort(\'w_down\');">';
+				echo 'w_down\');">';
 			}
 			?>Поиск</td>
-			<td class='button' <?
+			<td class='button' onclick="sort('<?
 			if($_GET['sort']=="l_up"){
-				echo 'onclick="sort(\'l_down\');" class="active"> &#8593; ';
+				echo 'l_down\');" class="active"> &#8593; ';
 			}else if($_GET['sort']=="l_down"){
-				echo 'onclick="sort(\'l_up\');" class="active"> &#8595; ';
+				echo 'l_up\');" class="active"> &#8595; ';
 			}else{
-				echo 'onclick="sort(\'l_down\');">';
+				echo 'l_down\');">';
 			}
 			?>Язык</td>
 			<td>Переводы</td>
-			<td class='button' <?
+			<td class='button' onclick="sort('<?
 			if($_GET['sort']=="s_up"){
-				echo 'onclick="sort(\'s_down\');" class="active"> &#8593; ';
+				echo 's_down\');" class="active"> &#8593; ';
 			}else if($_GET['sort']=="s_down"){
-				echo 'onclick="sort(\'s_up\');" class="active"> &#8595; ';
+				echo 's_up\');" class="active"> &#8595; ';
 			}else{
-				echo 'onclick="sort(\'s_down\');">';
+				echo 's_down\');">';
 			}
 			?>Статистика</td>
 			<td>Изучивается</td>
 			<td class='button' onclick="document.location.href='./allwords.php?opened=1';">Очистить фильтр</td>
 		</tr>
-		<tr class='filter hat' <?if(!$filter['opened']){echo "style='display:none;'";}?>>
+		<tr class='filter' <?if(!$filter['opened']){echo "style='display:none;'";}?>>
 			<td><input type='text' size='5' id='which_word' onchange='save_parameter();' value="<?echo $filter['word'];?>"></td>
 			<td><input type='text' id='search' onchange='save_parameter();' value="<?echo $filter['search'];?>" style="width:100%;"></td>
 			<td>
@@ -399,11 +452,7 @@ if($_GET['active']){
 				echo "	
 				</td>
 				<td>";
-					if($line['attempts']){
-						echo $line['success']." из ".$line['attempts']." (".round(($line['success']/$line['attempts'])*100,0)."%, ".$line['status']." подряд)";
-					}else{
-						echo "0 попыток";
-					}
+					echo $line['success']." из ".$line['attempts']." (".round(($line['success']/$line['attempts'])*100,0)."%, ".$line['status']." подряд)";
 				echo "
 				</td>
 				<td>";

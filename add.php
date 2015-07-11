@@ -44,6 +44,7 @@ if($postword1 and $postword2){
 			}
 		}else{
 			if($debug) echo "Одно словo в базе<br>";
+			//print_r($word1);
 			if($word1['word']==$postword1){
 				//echo "В базе первое слово:".$word1['word']."=".$postword1."<br>";
 				$query="INSERT INTO dt_W_".$user['id']." VALUES ('','".$postword2."','".$_POST['lang2']."','0','','0','0','".$word1['id']."')";

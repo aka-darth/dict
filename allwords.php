@@ -42,7 +42,6 @@ if($_GET['active']){
 				alert(response);
 			}
 		});
-		
 	}
 	function sort(data){
 		document.getElementById("sort").value=data;
@@ -106,7 +105,7 @@ if($_GET['active']){
 		}
 	}
 	function try_edit(){
-		var url=<?echo $config['path'];?>"/edit_word.php";
+		var url="<?echo $config['path'];?>/edit_word.php";
 		var xhr = new XMLHttpRequest();
 		var form=document.getElementById('edit_form');
 		var data='from=web';
@@ -211,6 +210,50 @@ if($_GET['active']){
 </div>
 	</form>
 	
+				<?//Конструирование запроса в бд с учетом параметров
+			$query='SELECT t1.* FROM dt_W_'.$user['id'].' t1 ';
+			/* FILTER */
+			if($filter['opened']){
+				$query.=" WHERE";
+				if($filter['word']){
+					$query.=" t1.id=".$filter['word']." AND ";
+				}
+				if($filter['search']){
+					$query.=" t1.word LIKE '".$filter['search']."%' AND";
+				}
+				if($filter['lang']){
+					$query.=" t1.lang=".$filter['lang']." AND ";
+				}
+				switch($filter['active']){
+					case "on":
+						$query.=" (((SELECT t2.showlang FROM dt_lang_".$user['id']." t2 WHERE t2.id=t1.lang)=1) AND t1.status<4)";
+					break;
+					case "off":
+						$query.=" (((SELECT t2.showlang FROM dt_lang_".$user['id']." t2 WHERE t2.id=t1.lang)=0) OR t1.status>3)";
+					break;
+					default:case "both":$query.=" 1=1 ";break;
+				}
+			}
+			switch($_GET['sort']){
+				case "c_up":$query.=" ORDER BY (SELECT t2.showlang FROM dt_lang_".$user['id']." t2 WHERE t2.id=t1.lang),t1.status DESC";break;
+				case "c_down":$query.=" ORDER BY (NOT (SELECT t2.showlang FROM dt_lang_".$user['id']." t2 WHERE t2.id=t1.lang)),t1.status";break;
+				case "s_up":$query.=" ORDER BY t1.status DESC";break;
+				case "s_down":$query.=" ORDER BY t1.status";break;
+				case "n_up":$query.=" ORDER BY t1.id DESC";break;
+				case "n_down":$query.=" ORDER BY t1.id";break;
+				case "l_up":$query.=" ORDER BY t1.lang DESC";break;
+				case "l_down":$query.=" ORDER BY t1.lang";break;
+				case "w_up":$query.=" ORDER BY t1.word DESC";break;
+				case "w_down":default:$query.=" ORDER BY t1.word";
+			}
+			$s_query=$query;
+			$query=mysql_query($query);
+			$err=mysql_error();
+			if($err){
+				echo $err."<br>".$s_query;
+			}
+			/* FILTER END */
+?>
 	
 <input type='hidden' id='sort' value='<?echo $_GET['sort'];?>'>
 	<table id="allwords_table">
@@ -319,57 +362,16 @@ if($_GET['active']){
 				</select>
 			</td>
 			<td>колво от до переводы на - чекбоксы</td>
-			<td></td>
+			<td>
+				Выведено: <?echo mysql_num_rows($query);?>
+			</td>
 			<td>
 Да<input id='show_active' type='checkbox' onchange='save_parameter();' <?if($filter['active']=='on' or $filter['active']=='both'){echo " checked";}?> style='border:1px solid #f00;'>
 / Нет<input id='show_learned' type='checkbox' onchange='save_parameter();' <?if($filter['active']=='off' or $filter['active']=='both'){echo " checked";}?> style='border:1px solid #f00;'>
 			</td>
 			<td class='button' onclick="show_filter();">Скрыть фильтр</td>
 		</tr>
-			<?//Конструирование запроса в бд с учетом параметров
-			$query='SELECT t1.* FROM dt_W_'.$user['id'].' t1 ';
-			/* FILTER */
-			if($filter['opened']){
-				$query.=" WHERE";
-				if($filter['word']){
-					$query.=" t1.id=".$filter['word']." AND ";
-				}
-				if($filter['search']){
-					$query.=" t1.word LIKE '".$filter['search']."%' AND";
-				}
-				if($filter['lang']){
-					$query.=" t1.lang=".$filter['lang']." AND ";
-				}
-				switch($filter['active']){
-					case "on":
-						$query.=" (((SELECT t2.showlang FROM dt_lang_".$user['id']." t2 WHERE t2.id=t1.lang)=1) AND t1.status<4)";
-					break;
-					case "off":
-						$query.=" (((SELECT t2.showlang FROM dt_lang_".$user['id']." t2 WHERE t2.id=t1.lang)=0) OR t1.status>3)";
-					break;
-					default:case "both":$query.=" 1=1 ";break;
-				}
-			}
-			switch($_GET['sort']){
-				case "c_up":$query.=" ORDER BY (SELECT t2.showlang FROM dt_lang_".$user['id']." t2 WHERE t2.id=t1.lang),t1.status DESC";break;
-				case "c_down":$query.=" ORDER BY (NOT (SELECT t2.showlang FROM dt_lang_".$user['id']." t2 WHERE t2.id=t1.lang)),t1.status";break;
-				case "s_up":$query.=" ORDER BY t1.status DESC";break;
-				case "s_down":$query.=" ORDER BY t1.status";break;
-				case "n_up":$query.=" ORDER BY t1.id DESC";break;
-				case "n_down":$query.=" ORDER BY t1.id";break;
-				case "l_up":$query.=" ORDER BY t1.lang DESC";break;
-				case "l_down":$query.=" ORDER BY t1.lang";break;
-				case "w_up":$query.=" ORDER BY t1.word DESC";break;
-				case "w_down":default:$query.=" ORDER BY t1.word";
-			}
-			$s_query=$query;
-			$query=mysql_query($query);
-			$err=mysql_error();
-			if($err){
-				echo $err."<br>".$s_query;
-			}
-			/* FILTER END */
-			
+<?			
 			/* Print HTML */
 			$i=0;
 			while($line=mysql_fetch_assoc($query)){

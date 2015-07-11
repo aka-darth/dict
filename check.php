@@ -22,9 +22,9 @@ while($_POST['id'.$i]){
 	$keyword=$keyword['word'];
 	
 	if(!$_POST['word'.$i]){//Нет перевода
-		echo "<br><p style='color:#f00;font-size:20px;font-weight:bold;'>".$keyword." : Пустое значение!</p>";
+		echo "<br><p style='color:#a99;font-size:20px;font-weight:bold;'>".$keyword." : Пустое значение!</p>";
 		$query=mysql_query("UPDATE dt_W_".$user['id']." SET status=0 WHERE id=".$keyword['id']);
-		echo "Доступные варианты - <br><ul class='transes'>";
+		echo "<ul class='transes'>";
 		foreach($keytargets as $target){
 			$query=mysql_query("SELECT word FROM dt_W_".$user['id']." WHERE id=".$target);
 			$word=mysql_fetch_assoc($query);
@@ -45,11 +45,11 @@ while($_POST['id'.$i]){
 		$targets=explode(",",$word['target']);
 		if(in_array($_POST['id'.$i],$targets)){//Правильный перевод
 			$right++;
-			echo "<br><p style='color:#f90;font-size:20px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
+			echo "<br><p style='color:#f90;font-size:16px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
 			mysql_query("UPDATE dt_W_".$user['id']." SET success=".($success+1).",status=".($now+1)." WHERE id=".$_POST['id'.$i]);
 			if(count($keytargets)>1){
 				$end_time+=3;
-				echo "Доступные варианты - <br><ul class='transes'>";
+				echo "<ul class='transes'>";
 				foreach($keytargets as $target){
 					$query=mysql_query("SELECT word FROM dt_W_".$user['id']." WHERE id=".$target);
 					$word=mysql_fetch_assoc($query);
@@ -215,11 +215,14 @@ while($_POST['id'.$i]){
 	go=setInterval(function(){
 		time++;
 		if(time>end_time){
-			document.location.href='<?echo $_SERVER['HTTP_REFERER'];?>';
+			document.location.href='<?if($total){echo $_SERVER['HTTP_REFERER'];}else{echo $config['path']."/test.php";}?>';
 		}else{
 			document.getElementById('timer').firstChild.nodeValue='Страница закроется через '+(end_time-time)+' c.';
 		}
-	},1000)
+	},1000);
+	function choose_lang(){
+		
+	}
 </script>
 </body>
 </html>

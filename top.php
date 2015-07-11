@@ -123,6 +123,9 @@ if($user){
 			<div class="top_button" <?if($page=="langs"){echo "id='top_but_selected'";}?>>
 				<a href="langs.php">Langs</a>
 			</div>
+			<div class="top_button" <?if($page=="stats"){echo "id='top_but_selected'";}?>>
+				<a href="stats.php">Stats</a>
+			</div>
 			<div class="top_button" style="display:none;" <?if($page=="settings"){echo "id='top_but_selected'";}?>>
 				<a href="#">Settings</a>
 			</div>

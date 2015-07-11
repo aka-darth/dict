@@ -27,9 +27,9 @@ input:hover, button:hover{
 }
 @media (min-device-width:800px){
 	#header{
-		width:42%;
+		width:50%;
 		left:50%;
-		margin-left:-21%;
+		margin-left:-25%;
 		position:fixed;
 	}
 	.top_button a{
@@ -94,7 +94,7 @@ td a{
 td a:visited{	
 	color:#b50;
 }
-table{
+table,#stats_container{
 	background:#555;
 	border-collapse: collapse; 
 	border-spacing: 0px; 
@@ -102,7 +102,7 @@ table{
 	padding:0;
 	margin: 0 auto;
 	margin-top:50px;
-	font-size:100% !important;
+	font-size:100%;
 }
 body{
 	font-size:1vw;
@@ -226,7 +226,11 @@ p{
 		max-width:100%;
 	}
 }
-
+@media screen and (max-device-width: 767px){
+	body{
+		font-size:1.4vw;
+	}
+}
 /* ALLWORDS */
 #edit_form_div{
 	position:fixed;

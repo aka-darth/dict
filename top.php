@@ -78,6 +78,7 @@ if($user){
 			}
 		</script>
 		<meta charset="utf-8">
+		<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
 		<link type="text/css" rel="stylesheet" href="style.css">
 		<!--[if IE 9]>
 			<meta http-equiv="refresh" content="0; url=http://browsehappy.com/">

@@ -118,20 +118,22 @@ if($_GET['active']){
 			if(xhr.readyState==4){
 				if(xhr.status==200){
 					try{
-						console.log(xhr.responseText);
 						if(xhr.responseText.indexOf('Error')<0){
 							document.getElementById('fence').style.display='none';
 							document.getElementById('edit_form_div').style.display='none';
 							document.getElementById('fields').innerHTML='';
-							id=parseInt(xhr.responseText.split("'>")[1].split("</td>")[0]);//костыль(
-							console.log(id);
-							console.log(document.getElementById('tr'+id));
-							document.getElementById('tr'+id).innerHTML=xhr.responseText;
+
+							console.log(xhr.responseText);
+							console.log(xhr.responseText.trim());
+							console.log(JSON.parse(xhr.responseText.trim()));
+							//console.log(document.getElementById('tr'+id));
+							document.getElementById('tr'+(JSON.parse(xhr.responseText.trim())).id).innerHTML=(JSON.parse(xhr.responseText.trim())).html;
 						}else{
-							console.log(error);
+							console.log(xhr.responseText);
 						}
 					}catch(e){
 						console.log('Error in xhr callback:'+e.stack);
+						console.error(e);
 					}
 				}else{
 					console.log('XHR status='+xhr.status+'; url='+url+';');
@@ -216,7 +218,7 @@ if($_GET['active']){
 			if($filter['opened']){
 				$query.=" WHERE";
 				if($filter['word']){
-					$query.=" t1.id=".$filter['word']." AND ";
+					$query.=" t1.id=".intval($filter['word'])." AND ";
 				}
 				if($filter['search']){
 					$query.=" t1.word LIKE '".$filter['search']."%' AND";

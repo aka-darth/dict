@@ -15,14 +15,14 @@ while($_POST['id'.$i]){
 	$query=mysql_query("SELECT id,word,target,status,attempts,success,lang FROM dt_W_".$user['id']." WHERE id=".$_POST['id'.$i]);
 	$keyword=mysql_fetch_assoc($query);
 	$keytargets=explode(",",$keyword['target']);
-	mysql_query("UPDATE dt_W_".$user['id']." SET attempts=".($keyword['attempts']+1).",last_attempt=NOW() WHERE id=".$keyword['id']);
+	mysql_query("UPDATE dt_W_".$user['id']." SET attempts=".($keyword['attempts']+1).", last_attempt=NOW() WHERE id=".$keyword['id']);
 	$success=$keyword['success'];
 	$now=$keyword['status'];
 	$lang=$keyword['lang'];
 	$keyword=$keyword['word'];
 	
 	if(!$_POST['word'.$i]){//Нет перевода
-		echo "<br><p style='color:#a99;font-size:20px;font-weight:bold;'>".$keyword." : Пустое значение!</p>";
+		echo "<br><p style='color:#faa;font-size:20px;font-weight:bold;'>".$keyword." : Пустое значение!</p>";
 		$query=mysql_query("UPDATE dt_W_".$user['id']." SET status=0 WHERE id=".$keyword['id']);
 		echo "<ul class='transes'>";
 		foreach($keytargets as $target){
@@ -45,7 +45,7 @@ while($_POST['id'.$i]){
 		$targets=explode(",",$word['target']);
 		if(in_array($_POST['id'.$i],$targets)){//Правильный перевод
 			$right++;
-			echo "<br><p style='color:#f90;font-size:16px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
+			echo "<br><p style='color:#a99;font-size:16px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
 			mysql_query("UPDATE dt_W_".$user['id']." SET success=".($success+1).",status=".($now+1)." WHERE id=".$_POST['id'.$i]);
 			if(count($keytargets)>1){
 				$end_time+=3;
@@ -58,7 +58,7 @@ while($_POST['id'.$i]){
 				echo "</ul>";
 			}
 		}else{//Неравильный перевод, введено неправильное слово,которое однако есть в базе..
-			echo "<br><p style='color:#f00;font-size:20px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
+			echo "<br><p style='color:#f90;font-size:20px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
 			$end_time+=3;
 			mysql_query("UPDATE dt_W_".$user['id']." SET status=0 WHERE id=".$keyword['id']);
 			echo "Доступные варианты - <br><ul class='transes'>";

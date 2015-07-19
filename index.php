@@ -46,6 +46,9 @@ function callbackfunction(root){
 		}
 		return false;
 	}catch(e){
+		document.getElementById('word'+(target-1||2)).className="input_error";
+		setTimeout(function(){this.className="";}.bind(document.getElementById('word'+(target-1||2))),3000);
+			//Это варварство,я знаю.
 		console.log(e);
 		console.log('Я не понял ответ от сервера:'+e.message);
 		return false;

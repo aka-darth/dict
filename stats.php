@@ -30,63 +30,6 @@ if($_GET['active']){
 	$filter['active']="both";
 }
 ?>
-<style>
-	
-</style>
-<script>
-	function set_activity(id,that){
-		xhr_send('activity.php?id='+id+'&enabled='+that.value,function(response){
-			if(response.trim()=='ok'){
-				if(that.value){
-					that.parentNode.parentNode.className='inactive_word';
-				}else{
-					that.parentNode.parentNode.className='';
-				}
-			}else{
-				alert(response);
-			}
-		});
-		
-	}
-	function sort(data){
-		document.getElementById("sort").value=data;
-		save_parameter();
-	}
-	function show_filter(){
-		var filter=document.getElementsByClassName('filter');
-		for(var i=0;i<filter.length;i++){
-			filter[i].style.display=(filter[i].style.display=='none')?('table-row'):('none');
-		}
-		var filter=document.getElementsByClassName('hat');
-		for(var i=0;i<filter.length;i++){
-			filter[i].style.display=(filter[i].style.display=='none')?('table-row'):('none');
-		}
-	}
-	function save_parameter(){
-		var word=document.getElementById("which_word").value;
-		var lang=document.getElementById("lang").value;
-		var sort=document.getElementById("sort").value;
-		var search=document.getElementById("search").value;
-		var opened=(document.getElementsByClassName('filter')[0].style.display=="none")?(""):("1");
-		if(document.getElementById("show_active").checked){
-			if(document.getElementById("show_learned").checked){
-				var active="both";
-			}else{
-				var active="on";
-			}
-		}else{
-			if(document.getElementById("show_learned").checked){
-				var active="off";
-			}else{
-				document.getElementById("show_learned").checked=true;
-				document.getElementById("show_active").checked=true;
-				var active="both";
-			}
-		}
-		var url='http://shcoding.esy.es/dict/allwords.php?sort='+sort+'&opened='+opened+'&word='+word+'&lang='+lang+"&search="+search+"&active="+active;
-		document.location.href=url;
-	}
-</script>
 	<div id="stats_container">
 			<?
 			$langs=mysql_query("SELECT * FROM dt_lang_".$user['id']);
@@ -94,8 +37,8 @@ if($_GET['active']){
 				echo "<hr/>".$lang['name'];
 				if($lang['ab'])echo " (".$lang['ab'].")";
 				if(!$lang['showlang']){
-					echo " (отключен)<br/>";
-					continue;
+					echo " (отключен)";
+//					continue;
 				}
 				echo ":<br/>";
 			
@@ -119,7 +62,7 @@ if($_GET['active']){
 				$query=$s_query." 1=1";
 				$total=mysql_num_rows(mysql_query($query));
 				
-				$query=$s_query.'(( (t1.last_attempt <( NOW() - INTERVAL 200 MINUTE )) AND t1.status<4) OR  (t1.last_attempt < ( NOW() - INTERVAL (t1.status*15) DAY )))';
+				$query=$s_query.'(( (t1.last_attempt <( NOW() - INTERVAL 200 MINUTE )) AND t1.status<4) OR  (t1.last_attempt < ( NOW() - INTERVAL (t1.status*15+1) DAY )))';
 				$active=mysql_num_rows(mysql_query($query));
 
 				/*

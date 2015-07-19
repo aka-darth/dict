@@ -101,5 +101,5 @@ if($_POST['login']){//Try to Log In
 		//do nothing...
 	}
 }
-echo mysql_error();
+if($debug)echo mysql_error();
 ?>

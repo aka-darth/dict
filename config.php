@@ -1,6 +1,8 @@
 ﻿<?
 //Debug mode on/off
 $debug=false;
+//Simple mode
+$simple=false;
 
 //Mysql connection
 $link = mysql_connect("mysql.hostinger.ru", "u115595049_dict", "bazpas")or die("Could not connect : ".mysql_error());

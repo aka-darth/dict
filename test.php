@@ -35,14 +35,17 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
 		}
 		return e;
 	}
-	function activate_drag(e,elem){
+	function activate_drag(e,elem,touch){
 <?if(!$_GET['lang'] and $_GET['lang']!=="0"){
 // УБРАТЬ ЭТОТ ИНДУС-СТАЙЛ
 
-?>
-		e = fixEvent(e);
+?>		
+		if(touch){
+			var e=e.targetTouches[0];
+		}else{
+			e = fixEvent(e);
+		}
 		var d_c=document.getElementById('drag_container');
-		
 		var from=document.getElementsByName('word'+elem.id.split("_")[1])[0];
 		
 		d_c.firstChild.nodeValue=elem.firstChild.nodeValue;
@@ -54,17 +57,31 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
 		var shiftX=elem.getBoundingClientRect().left-e.clientX;
 		var shiftY=elem.getBoundingClientRect().top-e.clientY;
 		
-		console.log(shiftX+' '+shiftY);
+//			alert(shiftX+' '+shiftY);
 		
 		document.ondragstart=function(){return false;}
-		document.onmousemove=function(e){
-			e = fixEvent(e);
-			d_c.style.top=e.pageY+shiftY;
-			d_c.style.left=e.pageX+shiftX;
-			return false;	
+		
+		if(touch){
+			document.addEventListener('touchmove',function(event){
+			  if (event.targetTouches.length == 1) {
+				d_c.style.border="2px solid black";
+				d_c.style.position="absolute";
+				var touch = event.targetTouches[0];
+				// Place element where the finger is
+				d_c.style.left=(touch.pageX+shiftX)+'px';
+				d_c.style.top=(touch.pageY +shiftY)+'px';
+			  }					
+			});
+		}else{
+			document.onmousemove=function(e){
+				e = fixEvent(e);
+				d_c.style.top=e.pageY+shiftY;
+				d_c.style.left=e.pageX+shiftX;
+				return false;	
+			}	
 		}
 		
-		document.onmouseup=function(e){
+		document.ontouchend=document.onmouseup=function(e){
 			e = fixEvent(e);
 			d_c.style.display='none';
 			var where=document.elementFromPoint(e.clientX,e.clientY);
@@ -74,7 +91,7 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
 			}
 			d_c.firstChild.nodeValue=' ';
 			document.onmousemove=null;
-			document.onmouseup=null;
+			document.ontouchend=document.onmouseup=null;
 			return false;
 		}
 		return false;
@@ -143,7 +160,7 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
 					$what.=',t1.last_attempt,t1.lang ';
 					$from='FROM dt_W_'.$user['id'].' t1 JOIN dt_lang_'.$user['id'].' lang ON t1.lang=lang.id WHERE ';
 					//		   (время последней попытки меньше чем сейчас минус час И    статус<4) или(время последней попытки меньше чем сейчас минус )
-					$where='((t1.last_attempt < (NOW() - INTERVAL 200 MINUTE) AND t1.status<4) OR (t1.last_attempt < (NOW() - INTERVAL (t1.status*15) DAY)))';
+					$where='((t1.last_attempt < (NOW() - INTERVAL 200 MINUTE) AND t1.status<4) OR (t1.last_attempt < (NOW() - INTERVAL (t1.status*15+1) DAY)))';
 					$where.=" AND lang.showlang=1";
 					if($_GET['lang'] or $_GET['lang']==="0"){
 						$where.=" AND lang=".$_GET['lang'];
@@ -276,8 +293,8 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
 				<td>
 					<input type='hidden' name='id0' value='".$words_array[0]['id']."'>
 					<span";
-				if($words_array[0]['status']==3 or $words_array[0]['status']=="3"){echo " class='blink'";}
-				echo " id='word_0_container' onmousedown='activate_drag(event,this);'>".$words_array[0]['word']."</span>";
+				if(intval($words_array[0]['status'])>2){echo " class='blink'";}
+				echo " id='word_0_container' ontouchstart='activate_drag(event,this,true);' onmousedown='activate_drag(event,this);'>".$words_array[0]['word']."</span>";
 				if($debug)echo " <a href='".$config['path']."/allwords.php?opened=1&word=".$words_array[0]['id']."' target='_blank' style='font-size:10px;'>Edit</a>";
 				echo "
 				</td>
@@ -292,8 +309,8 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
 				<td>
 					<input type='hidden' name='id".$i."' value='".$words_array[$i]['id']."'>
 					<span";
-					if($words_array[$i]['status']==3 or $words_array[$i]['status']=="3"){echo " class='blink'";}
-					echo " id='word_".$i."_container' onmousedown='activate_drag(event,this);'>".$words_array[$i]['word']."</span>";
+					if(intval($words_array[$i]['status'])>2){echo " class='blink'";}
+					echo " id='word_".$i."_container' ontouchstart='activate_drag(event,this,true);' onmousedown='activate_drag(event,this);'>".$words_array[$i]['word']."</span>";
 					if($debug)echo " <a href='".$config['path']."/allwords.php?opened=1&word=".$words_array[$i]['id']."' target='_blank' style='font-size:10px;'>Edit</a>";
 					echo "
 					</td>

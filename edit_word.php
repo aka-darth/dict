@@ -1,13 +1,13 @@
-﻿<?include "../mysql.php";
+﻿<?
+include "../mysql.php";
 include "login.php";
+header('Content-type: application/json; charset=utf-8');
 //Здесь надо закрыть дыру в безопасности и сделать вывод под аякс
 
 //print_r($_POST);
 //echo "<hr>";
 
-
-$old_word=mysql_fetch_assoc(mysql_query("SELECT word,lang,target FROM dt_W_".$user['id']." WHERE id=".$_POST['id']));
-
+$old_word=mysql_fetch_assoc(mysql_query("SELECT word,lang,target FROM dt_W_".$user['id']." WHERE id=".intval($_POST['id'])));
 
 $main_query="UPDATE dt_W_".$user['id']." SET ";
 if($_POST['word']!=$old_word['word']){
@@ -56,24 +56,24 @@ while($_POST['trans'.$i]){
 	}
 	$i++;
 }
+
 $targets=$new_targets;
 if(count($targets)){	
 	$main_query.=" target='".implode(",",$targets)."',";
 }
-
 $main_query.=" lang='".$_POST['lang']."'";
 
 $main_query.=" WHERE id=".$_POST['id'];
 mysql_query($main_query);
 $err=mysql_error();
+
 if($err){
-	echo "Error:".$err." in query ".$main_query;
+	echo '{"error":"'.$err.'","query":"'.$main_query.'"}';
 }else{
 	//Отдаем обновленную строку таблицы (HTML)
 	$query='SELECT t1.* FROM dt_W_'.$user['id'].' t1 WHERE id='.$_POST['id'];
 	$line=mysql_fetch_assoc(mysql_query($query));
-	echo "
-	<td id='id".$_POST['tr_id']."'>
+	$html="<td id='id".$_POST['tr_id']."'>
 	".$line['id']."
 	</td>
 	<td>
@@ -81,41 +81,50 @@ if($err){
 	</td>
 	<td>
 		".$langs[$line['lang']]['name']."
-		<input type='hidden' id='lang".$_POST['tr_id']."' value='".$line['lang']."'>";
-	echo "
+		<input type='hidden' id='lang".$_POST['tr_id']."' value='".$line['lang']."'>
 	</td>				
 	<td id='targets".$_POST['tr_id']."'>";
+	
 	$targets=explode(",",$line['target']);
 	foreach($targets as $target){
 		$word=mysql_fetch_assoc(mysql_query("SELECT id,word,lang FROM  dt_W_".$user['id']." WHERE id=".$target));
-		echo "<a href='#tr".$target."'>".$word['word']."</a> (".$langs[$word['lang']]['ab'].") <a href='#".$_POST['tr_id']."' title='Удалить'>x</a><input type='hidden' class='targets".$_POST['tr_id']."' value='".$word['id']."' word='".$word['word']."' lang='".$word['lang']."'><br>";
+		$html.="<a href='#tr".$target."'>".$word['word']."</a> (".$langs[$word['lang']]['ab'].") <a href='#".$_POST['tr_id']."' title='Удалить'>x</a><input type='hidden' class='targets".$_POST['tr_id']."' value='".$word['id']."' word='".$word['word']."' lang='".$word['lang']."'><br>";
 	}
-	echo "	
+	$html.="	
 	</td>
-	<td>";
-		echo $line['success']." из ".$line['attempts']." (".round(($line['success']/$line['attempts'])*100,0)."%, ".$line['status']." подряд)";
-	echo "
+	<td>".$line['success']." из ".$line['attempts']." (".round(($line['success']/$line['attempts'])*100,0)."%, ".$line['status']." подряд)
 	</td>
 	<td>";
 	if($langs[$line['lang']]['showlang']){
 		if($line['status']<4){
-			echo "
+			$html.="
 		<input type='radio' onclick='set_activity(".$line['id'].",this);' style='border:1px solid #f00;' checked name='show".$line['id']."' value='1'>/<input type='radio' onclick='set_activity(".$line['id'].",this);' style='border:1px solid #0f0;' name='show".$line['id']."' value='0'>";
 		}else{
-			echo "
+			$html.="
 		<input type='radio' onclick='set_activity(".$line['id'].",this);' style='border:1px solid #f00;' name='show".$line['id']."' value='1'>/<input type='radio' onclick='set_activity(".$line['id'].",this);' style='border:1px solid #0f0;' checked name='show".$line['id']."' value='0'>";
 		}
 	}else{
-		echo "Язык отключен";
+		$html.="Язык отключен";
 	}
-	echo "
+	$html.="
 	</td>
 	<td>
 		<a href='delete_word.php?id=".$line['id']."'>Удалить</a>
 		<a href='#".$_POST['tr_id']."' onclick='edit(".$_POST['tr_id'].");'>Изменить</a>
 	</td>";
 	
-	
+	echo json_encode(
+		array(
+			"html" => $html,
+			"id"=>$line['id']
+		)
+	);
+	if($debug){
+		var_dump($old_word);
+		var_dump($new_targets);
+		var_dump($main_query);
+		var_dump($err);
+	}	
 }
 /*<input type="button" onclick="document.location.href='<?echo $_SERVER['HTTP_REFERER'];?>'" autofocus value="Продолжить">
 */?>

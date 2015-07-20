@@ -1,10 +1,10 @@
 ﻿<?include "config.php";
 include "login.php";
 if($user){
-	$query=mysql_query("SELECT * FROM dt_lang_".$user['id']);
+	$query=mysqli_query($mysqli,"SELECT * FROM dt_lang_".$user['id']);
 	echo mysql_error();
 	$langs=Array();
-	while($lang=mysql_fetch_assoc($query)){
+	while($lang=mysqli_fetch_assoc($query)){
 		if($lang['showlang'] or $page=="all"){
 			$langs[$lang['id']]=array();
 			$langs[$lang['id']]=$lang;
@@ -16,7 +16,7 @@ if($user){
 		document.location.href='<?echo $config['path'];?>/langs.php';
 	</script>
 		<?
-	}else if(!mysql_num_rows(mysql_query("SELECT * FROM dt_W_".$user['id'])) and $_SERVER['SCRIPT_NAME']!='/index.php'){
+	}else if(!mysqli_num_rows(mysqli_query($mysqli,"SELECT * FROM dt_W_".$user['id'])) and $_SERVER['SCRIPT_NAME']!='/index.php'){
 		?>
 	<script>
 		document.location.href='<?echo $config['path'];?>/';

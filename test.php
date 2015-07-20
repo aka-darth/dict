@@ -42,35 +42,35 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
 ?>		
 		if(touch){
 			var e=e.targetTouches[0];
+			var lastx=e.clientX;
+			var lasty=e.clientY;
 		}else{
 			e = fixEvent(e);
 		}
 		var d_c=document.getElementById('drag_container');
 		var from=document.getElementsByName('word'+elem.id.split("_")[1])[0];
-		
-		d_c.firstChild.nodeValue=elem.firstChild.nodeValue;
-		d_c.style.top=elem.getBoundingClientRect().top;
-		d_c.style.left=elem.getBoundingClientRect().left;
-		d_c.style.color = 'black';
-		d_c.style.display='block';
-		
 		var shiftX=elem.getBoundingClientRect().left-e.clientX;
 		var shiftY=elem.getBoundingClientRect().top-e.clientY;
 		
+		d_c.firstChild.nodeValue=elem.firstChild.nodeValue;
+		d_c.style.top=e.clientY;
+		d_c.style.left=e.clientX;
+		d_c.style.color = 'black';
+		d_c.style.position="absolute";
+		d_c.style.display='block';
 //			alert(shiftX+' '+shiftY);
-		
 		document.ondragstart=function(){return false;}
-		
 		if(touch){
 			document.addEventListener('touchmove',function(event){
-			  if (event.targetTouches.length == 1) {
-				d_c.style.border="2px solid black";
-				d_c.style.position="absolute";
-				var touch = event.targetTouches[0];
-				// Place element where the finger is
-				d_c.style.left=(touch.pageX+shiftX)+'px';
-				d_c.style.top=(touch.pageY +shiftY)+'px';
-			  }					
+				if (event.targetTouches.length == 1) {
+					var touch = event.targetTouches[0];
+					d_c.style.left=(touch.pageX+shiftX)+'px';
+					d_c.style.top=(touch.pageY +shiftY)+'px';
+					lastx=touch.pageX;
+					lasty=touch.pageY;
+				}
+//				event.preventDefault();
+				return false;
 			});
 		}else{
 			document.onmousemove=function(e){
@@ -82,19 +82,24 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
 		}
 		
 		document.ontouchend=document.onmouseup=function(e){
-			e = fixEvent(e);
 			d_c.style.display='none';
-			var where=document.elementFromPoint(e.clientX,e.clientY);
+			if(touch){
+				var where=document.elementFromPoint(lastx,lasty);
+			}else{
+				e = fixEvent(e);
+				var where=document.elementFromPoint(e.clientX,e.clientY);
+			}
 			if(where.tagName.toLowerCase()=='input'){
 				from.value=document.getElementById('word_'+where.name.split('word')[1]+'_container').firstChild.nodeValue;
 				where.value=d_c.firstChild.nodeValue;
+			}else{
+				
 			}
 			d_c.firstChild.nodeValue=' ';
 			document.onmousemove=null;
 			document.ontouchend=document.onmouseup=null;
 			return false;
 		}
-		return false;
 <?}?>
 	}
 </script>
@@ -206,7 +211,7 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
 			<code>
 				<?
 				echo $query."<hr/>";
-				echo "num ".mysql_num_rows(mysql_query($query))."<hr/>";
+				echo "num ".mysqli_num_rows(mysqli_query($mysqli,$query))."<hr/>";
 				echo "<hr/>";
 				?>
 			</code>
@@ -214,8 +219,8 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
 		</tr>
 		<?}
 			$words_array=array();
-			$query=mysql_query($query);
-			while($line=mysql_fetch_array($query)){
+			$query=mysqli_query($mysqli,$query);
+			while($line=mysqli_fetch_array($query)){
 				if($double_array){
 					$words_array[]=array('id'=>$line['id'],'status'=>$line['status'],'word'=>$line['word'],'lang'=>$line['lang'],'last_attempt'=>$line['last_attempt']);
 					$words_array[]=array('id'=>$line['id2'],'status'=>$line['status2'],'word'=>$line['word2'],'lang'=>$line['lang2'],'last_attempt'=>$line['last2']);

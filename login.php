@@ -7,12 +7,12 @@ function set_cookie($name,$value,$expire,$path){
 	</script>";
 	return true;
 }
-if($_POST['login']){//Try to Log In
-	$query=mysql_query("SELECT * FROM dt_users WHERE login LIKE '".$_POST['login']."'");
-	if($user=mysql_fetch_assoc($query)){
+if(isset($_POST['login'])){//Try to Log In
+	$query=mysqli_query($mysqli,"SELECT * FROM dt_users WHERE login LIKE '".$_POST['login']."'");
+	if($user=mysqli_fetch_assoc($query)){
 		if(md5("ghjcnjcjkm".md5($_POST['pass']))==$user['pass']){
 			$hash=md5(rand(10000000,99999999));
-			mysql_query("UPDATE dt_users SET hash='".$hash."' where id=".$user['id']);
+			mysqli_query($mysqli,"UPDATE dt_users SET hash='".$hash."' where id=".$user['id']);
 			if(set_cookie("authid",$user['id'],time()+(60*60*24*2),"/")){}else{echo "FALSE";}
 			set_cookie("auth",$hash,time()+(60*60*24*7),"/");
 			//Header("Location: http://shcoding.esy.es/dict/");
@@ -24,9 +24,9 @@ if($_POST['login']){//Try to Log In
 		}
 	}else{
 		$hash=md5(rand(10000000,99999999));
-		mysql_query("INSERT INTO dt_users VALUES ('','0','".$_POST['login']."','".md5("ghjcnjcjkm".md5($_POST['pass']))."','".$hash."')");
-		$id=mysql_insert_id();
-		mysql_query("CREATE TABLE IF NOT EXISTS dt_lang_".$id."(
+		$query=mysqli_query($mysqli,"INSERT INTO dt_users VALUES ('','0','".$_POST['login']."','".md5("ghjcnjcjkm".md5($_POST['pass']))."','".$hash."')");
+		$id=mysqli_insert_id($query);
+		mysqli_query($mysqli,"CREATE TABLE IF NOT EXISTS dt_lang_".$id."(
 					  `id` int(11) NOT NULL AUTO_INCREMENT,
 					  `name` text COLLATE utf8_unicode_ci NOT NULL,
 					  `ab` text COLLATE utf8_unicode_ci NOT NULL,
@@ -35,7 +35,7 @@ if($_POST['login']){//Try to Log In
 					) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1;
 
 		");
-		mysql_query("CREATE TABLE IF NOT EXISTS dt_W_".$id."(
+		mysqli_query($mysqli,"CREATE TABLE IF NOT EXISTS dt_W_".$id."(
 					  `id` int(11) NOT NULL AUTO_INCREMENT,
 					  `word` text COLLATE utf8_unicode_ci NOT NULL,
 					  `lang` int(11) NOT NULL,
@@ -47,7 +47,7 @@ if($_POST['login']){//Try to Log In
 					  PRIMARY KEY (`id`)
 					) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1;
 		");
-		mysql_query("
+		mysqli_query($mysqli,"
 		INSERT INTO dt_lang_".$id." VALUES
 		(1, 'Русский', 'ru', 0),
 		(2, 'English', 'en', 0),
@@ -58,7 +58,7 @@ if($_POST['login']){//Try to Log In
 		(7, 'Українська мова', 'uk', 0),
 		(8, 'Polszczyzna', 'pl', 0),
 		(9, 'Türkçe', 'tr', 0);");
-		echo mysql_error();
+		echo mysqli_error();
 		set_cookie("authid",$id,time()+(60*60*24*2),'/');
 		set_cookie("auth",$hash,time()+(60*60*24*7),'/');
 		echo "Добро пожаловать! Я рад новым пользователям. Для вас уже загружен стандартный пакет языков. ";
@@ -79,14 +79,18 @@ if($_POST['login']){//Try to Log In
 		$sent=mail($to,$subject,$message,$headers);
 		//echo "Send - ".$sent;
 	}
+	if(!$debug){
 	?>
 <script>
 	document.location.href='<?echo $_SERVER['HTTP_REFERER'];?>';
 </script>
 	<?
+	}else{
+		?><a href="/">На главную</a><?
+	}
 }else{
 	if($_COOKIE['auth'] and $_COOKIE['authid']){
-		$user=mysql_fetch_assoc(mysql_query("SELECT id,login,hash FROM dt_users WHERE id=".$_COOKIE['authid']));
+		$user=mysqli_fetch_assoc(mysqli_query($mysqli,"SELECT id,login,hash FROM dt_users WHERE id=".$_COOKIE['authid']));
 		if($user['hash']==$_COOKIE['auth']){
 			// echo $user['login'];
 		}else{
@@ -101,5 +105,5 @@ if($_POST['login']){//Try to Log In
 		//do nothing...
 	}
 }
-if($debug)echo mysql_error();
+//if($debug)echo mysqli_error();
 ?>

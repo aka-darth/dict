@@ -249,8 +249,8 @@ if($_GET['active']){
 				case "w_down":default:$query.=" ORDER BY t1.word";
 			}
 			$s_query=$query;
-			$query=mysql_query($query);
-			$err=mysql_error();
+			$query=mysqli_query($mysqli,$query);
+			$err=mysqli_error($mysqli);
 			if($err){
 				echo $err."<br>".$s_query;
 			}
@@ -365,7 +365,7 @@ if($_GET['active']){
 			</td>
 			<td>колво от до переводы на - чекбоксы</td>
 			<td>
-				Выведено: <?echo mysql_num_rows($query);?>
+				Выведено: <?echo mysqli_num_rows($query);?>
 			</td>
 			<td>
 Да<input id='show_active' type='checkbox' onchange='save_parameter();' <?if($filter['active']=='on' or $filter['active']=='both'){echo " checked";}?> style='border:1px solid #f00;'>
@@ -376,7 +376,7 @@ if($_GET['active']){
 <?			
 			/* Print HTML */
 			$i=0;
-			while($line=mysql_fetch_assoc($query)){
+			while($line=mysqli_fetch_assoc($query)){
 				if($langs[$line['lang']]['showlang']==1 and $line['status']<4){
 					echo "<tr id='tr".$line['id']."' class='active_word'>";
 				}else{
@@ -397,7 +397,9 @@ if($_GET['active']){
 				<td id='targets".$i."'>";
 				$targets=explode(",",$line['target']);
 				foreach($targets as $target){
-					$word=mysql_fetch_assoc(mysql_query("SELECT id,word,lang FROM  dt_W_".$user['id']." WHERE id=".$target));
+					$t_query=mysqli_query($mysqli,"SELECT id,word,lang FROM  dt_W_".$user['id']." WHERE id=".$target);
+					$word=mysqli_fetch_assoc($t_query);
+					echo mysqli_error($mysqli);
 					echo "<a href='#tr".$target."'>".$word['word']."</a> (".$langs[$word['lang']]['ab'].") <a href='#".$i."' title='Удалить'>x</a><input type='hidden' class='targets".$i."' value='".$word['id']."' word='".$word['word']."' lang='".$word['lang']."'><br>";
 				}
 				echo "	

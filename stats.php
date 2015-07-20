@@ -1,7 +1,6 @@
 ﻿<?$page="stats";
-$title="Словарь: статиска";
+$title="Словарь: статистика";
 include "top.php";
-include "../mysql.php";
 $filter=array();
 //Тут надо перевести всё это дело на куки
 if($_GET['opened']){
@@ -32,8 +31,8 @@ if($_GET['active']){
 ?>
 	<div id="stats_container">
 			<?
-			$langs=mysql_query("SELECT * FROM dt_lang_".$user['id']);
-			while($lang=mysql_fetch_assoc($langs)){
+			$langs=mysqli_query($mysqli,"SELECT * FROM dt_lang_".$user['id']);
+			while($lang=mysqli_fetch_assoc($langs)){
 				echo "<hr/>".$lang['name'];
 				if($lang['ab'])echo " (".$lang['ab'].")";
 				if(!$lang['showlang']){
@@ -48,7 +47,7 @@ if($_GET['active']){
 				$s_query=$query;
 
 				$query.=" (((SELECT t2.showlang FROM dt_lang_".$user['id']." t2 WHERE t2.id=t1.lang)=1) AND t1.status<4)";
-				$in_process=mysql_num_rows(mysql_query($query));
+				$in_process=mysqli_num_rows(mysqli_query($mysqli,$query));
 
 				/*				
 				$query=$s_query." (((SELECT t2.showlang FROM dt_lang_".$user['id']." t2 WHERE t2.id=t1.lang)=0) OR t1.status>3)";
@@ -57,13 +56,13 @@ if($_GET['active']){
 */
 
 				$query=$s_query." t1.status>3";
-				$finish=mysql_num_rows(mysql_query($query));
+				$finish=mysqli_num_rows(mysqli_query($mysqli,$query));
 				
 				$query=$s_query." 1=1";
-				$total=mysql_num_rows(mysql_query($query));
+				$total=mysqli_num_rows(mysqli_query($mysqli,$query));
 				
 				$query=$s_query.'(( (t1.last_attempt <( NOW() - INTERVAL 200 MINUTE )) AND t1.status<4) OR  (t1.last_attempt < ( NOW() - INTERVAL (t1.status*15+1) DAY )))';
-				$active=mysql_num_rows(mysql_query($query));
+				$active=mysqli_num_rows(mysqli_query($mysqli,$query));
 
 				/*
 				$last='SELECT MAX(last_attempt) FROM dt_W_'.$user['id'].' WHERE lang='.$lang['id'];
@@ -78,7 +77,7 @@ if($_GET['active']){
 				*/
 				
 				
-				echo "Всего ".$total." слов, изучено ".($finish*100/$total)."%, в процессе ".$in_process.", активных (включая напоминаемые) слов ".$active."<br/>";
+				echo "Всего ".$total." слов, изучено ".($total>0?$finish*100/$total:$total)."%, в процессе ".$in_process.", активных (включая напоминаемые) слов ".$active."<br/>";
 				
 				$err=mysql_error();
 				if($err){

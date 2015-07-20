@@ -12,15 +12,15 @@ if($_POST['name']){
 	$name = translit_url($_POST['name']);
 	$ab=$name[0].$name[1];
 	$i=2;
-	$query=mysql_query("SELECT * FROM dt_lang_".$user['id']);
-	while($lang=mysql_fetch_assoc($query)){
+	$query=mysqli_query($mysqli,"SELECT * FROM dt_lang_".$user['id']);
+	while($lang=mysqli_fetch_assoc($query)){
 		if($lang['ab']==$ab){
 			$ab.=$name[$i++];
-			$query=mysql_query("SELECT * FROM dt_lang_".$user['id']);
+			$query=mysqli_query($mysqli,"SELECT * FROM dt_lang_".$user['id']);
 		}
 	}
 	echo $ab;
-	$query=mysql_query("INSERT INTO dt_lang_".$user['id']." VALUES('','".$_POST['name']."','".$ab."',1)");
+	$query=mysqli_query($mysqli,"INSERT INTO dt_lang_".$user['id']." VALUES('','".$_POST['name']."','".$ab."',1)");
 }
 ?>
 <script>
@@ -52,8 +52,8 @@ if($_POST['name']){
 		</td>
 	</tr>
 <?
-$query=mysql_query("SELECT * FROM dt_lang_".$user['id']);
-while($line=mysql_fetch_assoc($query)){
+$query=mysqli_query($mysqli,"SELECT * FROM dt_lang_".$user['id']);
+while($line=mysqli_fetch_assoc($query)){
 	echo "
 	<tr>
 		<td>

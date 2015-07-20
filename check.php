@@ -1,4 +1,4 @@
-﻿<?
+<?
 $page="check";
 include "top.php";
 $i=0;
@@ -8,26 +8,28 @@ $right=$_COOKIE['right'] or 0;
 
 
 
-while($_POST['id'.$i]){
+while($_POST["id".$i]){
 	$total++;
 	$may_add=false;
 	//Берем исходное слово
-	$query=mysql_query("SELECT id,word,target,status,attempts,success,lang FROM dt_W_".$user['id']." WHERE id=".$_POST['id'.$i]);
-	$keyword=mysql_fetch_assoc($query);
+	$query=mysqli_query($mysqli,"SELECT id,word,target,status,attempts,success,lang FROM dt_W_".$user["id"]." WHERE id=".$_POST["id".$i]);
+	$keyword=mysqli_fetch_assoc($query);
 	$keytargets=explode(",",$keyword['target']);
-	mysql_query("UPDATE dt_W_".$user['id']." SET attempts=".($keyword['attempts']+1).", last_attempt=NOW() WHERE id=".$keyword['id']);
+	mysqli_query($mysqli,"UPDATE dt_W_".$user["id"]." SET attempts=".($keyword['attempts']+1).", last_attempt=NOW() WHERE id=".$keyword["id"]);
 	$success=$keyword['success'];
 	$now=$keyword['status'];
 	$lang=$keyword['lang'];
+	$keyword_id=$keyword['id'];
 	$keyword=$keyword['word'];
+	
 	
 	if(!$_POST['word'.$i]){//Нет перевода
 		echo "<br><p style='color:#faa;font-size:20px;font-weight:bold;'>".$keyword." : Пустое значение!</p>";
-		$query=mysql_query("UPDATE dt_W_".$user['id']." SET status=0 WHERE id=".$keyword['id']);
+		$query=mysqli_query($mysqli,"UPDATE dt_W_".$user["id"]." SET status=0 WHERE id=".$keyword_id);
 		echo "<ul class='transes'>";
 		foreach($keytargets as $target){
-			$query=mysql_query("SELECT word FROM dt_W_".$user['id']." WHERE id=".$target);
-			$word=mysql_fetch_assoc($query);
+			$query=mysqli_query($mysqli,"SELECT word FROM dt_W_".$user["id"]." WHERE id=".$target);
+			$word=mysqli_fetch_assoc($query);
 			echo "<li>".$word['word']."</li>";
 		}
 		echo "</ul>";
@@ -36,23 +38,23 @@ while($_POST['id'.$i]){
 		continue;
 	}
 	//Поиск пользовательского перевода 
-	$query="SELECT * FROM dt_W_".$user['id']." WHERE word LIKE '".strtolower($_POST['word'.$i])."'";
+	$query="SELECT * FROM dt_W_".$user["id"]." WHERE word LIKE '".strtolower($_POST['word'.$i])."'";
 	if($_POST['to'] or $_POST['to']==="0"){
 		$query.=" AND lang=".$_POST['to'];
 	}
-	$query=mysql_query($query);
-	if($word=mysql_fetch_assoc($query)){
+	$query=mysqli_query($mysqli,$query);
+	if($word=mysqli_fetch_assoc($query)){
 		$targets=explode(",",$word['target']);
-		if(in_array($_POST['id'.$i],$targets)){//Правильный перевод
+		if(in_array($_POST["id".$i],$targets)){//Правильный перевод
 			$right++;
 			echo "<br><p style='color:#a99;font-size:16px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
-			mysql_query("UPDATE dt_W_".$user['id']." SET success=".($success+1).",status=".($now+1)." WHERE id=".$_POST['id'.$i]);
+			mysqli_query($mysqli,"UPDATE dt_W_".$user["id"]." SET success=".($success+1).",status=".($now+1)." WHERE id=".$_POST["id".$i]);
 			if(count($keytargets)>1){
 				$end_time+=3;
 				echo "<ul class='transes'>";
 				foreach($keytargets as $target){
-					$query=mysql_query("SELECT word FROM dt_W_".$user['id']." WHERE id=".$target);
-					$word=mysql_fetch_assoc($query);
+					$query=mysqli_query($mysqli,"SELECT word FROM dt_W_".$user["id"]." WHERE id=".$target);
+					$word=mysqli_fetch_assoc($query);
 					echo "<li>".$word['word']."</li>";
 				}
 				echo "</ul>";
@@ -60,11 +62,11 @@ while($_POST['id'.$i]){
 		}else{//Неравильный перевод, введено неправильное слово,которое однако есть в базе..
 			echo "<br><p style='color:#f90;font-size:20px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
 			$end_time+=3;
-			mysql_query("UPDATE dt_W_".$user['id']." SET status=0 WHERE id=".$keyword['id']);
+			mysqli_query($mysqli,"UPDATE dt_W_".$user["id"]." SET status=0 WHERE id=".$keyword_id);
 			echo "Доступные варианты - <br><ul class='transes'>";
 			foreach($keytargets as $target){
-				$query=mysql_query("SELECT word FROM dt_W_".$user['id']." WHERE id=".$target);
-				$word=mysql_fetch_assoc($query);
+				$query=mysqli_query($mysqli,"SELECT word FROM dt_W_".$user["id"]." WHERE id=".$target);
+				$word=mysqli_fetch_assoc($query);
 				echo "<li>".$word['word']."</li>";
 			}
 			echo "</ul>";
@@ -143,24 +145,24 @@ while($_POST['id'.$i]){
 			default:echo $lang;
 		}
 		$translit=strtr(strtolower($_POST['word'.$i]),$trans);
-		$qu="SELECT * FROM dt_W_".$user['id']." WHERE word LIKE '".$translit."'";
+		$qu="SELECT * FROM dt_W_".$user["id"]." WHERE word LIKE '".$translit."'";
 		if($_POST['to'] or $_POST['to']==="0"){
 			$qu.=" AND lang=".$_POST['to'];
 		}
-		$qu=mysql_query($qu);
-		if($word=mysql_fetch_assoc($qu)){
+		$qu=mysqli_query($mysqli,$qu);
+		if($word=mysqli_fetch_assoc($qu)){
 			$targets=explode(",",$word['target']);
-			if(in_array($_POST['id'.$i],$targets)){//Правильный перевод
+			if(in_array($_POST["id".$i],$targets)){//Правильный перевод
 				$right++;
 				echo "<br>Распознана неправильная раскладка.";
 				echo "<p style='color:#f90;font-size:20px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]." > ".$translit."</p>";
-				mysql_query("UPDATE dt_W_".$user['id']." SET success=".($success+1).",status=".($now+1)." WHERE id=".$_POST['id'.$i]);
+				mysqli_query($mysqli,"UPDATE dt_W_".$user["id"]." SET success=".($success+1).",status=".($now+1)." WHERE id=".$_POST["id".$i]);
 				if(count($keytargets)>1){
 					$end_time+=3;
 					echo "Доступные варианты - <br><ul class='transes'>";
 					foreach($keytargets as $target){
-						$query=mysql_query("SELECT word FROM dt_W_".$user['id']." WHERE id=".$target);
-						$word=mysql_fetch_assoc($query);
+						$query=mysqli_query($mysqli,"SELECT word FROM dt_W_".$user["id"]." WHERE id=".$target);
+						$word=mysqli_fetch_assoc($query);
 						echo "<li>".$word['word']."</li>";
 					}
 					echo "</ul>";
@@ -168,11 +170,11 @@ while($_POST['id'.$i]){
 			}else{//Неравильный перевод, введено неправильное слово,которое однако есть в базе..
 				echo "<br><p style='color:#f00;font-size:20px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
 				$end_time+=3;
-				mysql_query("UPDATE dt_W_".$user['id']." SET status=0 WHERE id=".$keyword['id']);
+				mysqli_query($mysqli,"UPDATE dt_W_".$user["id"]." SET status=0 WHERE id=".$keyword["id"]);
 				echo "Доступные варианты - <br><ul class='transes'>";
 				foreach($keytargets as $target){
-					$query=mysql_query("SELECT word FROM dt_W_".$user['id']." WHERE id=".$target);
-					$word=mysql_fetch_assoc($query);
+					$query=mysqli_query($mysqli,"SELECT word FROM dt_W_".$user["id"]." WHERE id=".$target);
+					$word=mysqli_fetch_assoc($query);
 					echo "<li>".$word['word']."</li>";
 				}
 				echo "</ul>";
@@ -182,10 +184,10 @@ while($_POST['id'.$i]){
 			echo "<br><p style='color:#f00;font-size:20px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
 			$end_time+=3;
 			echo "Доступные варианты - <br><ul class='transes'>";
-			mysql_query("UPDATE dt_W_".$user['id']." SET status=0 WHERE id=".$keyword['id']);
+			mysqli_query($mysqli,"UPDATE dt_W_".$user["id"]." SET status=0 WHERE id=".$keyword_id);
 			foreach($keytargets as $target){
-				$query=mysql_query("SELECT word FROM dt_W_".$user['id']." WHERE id=".$target);
-				$word=mysql_fetch_assoc($query);
+				$query=mysqli_query($mysqli,"SELECT word FROM dt_W_".$user["id"]." WHERE id=".$target);
+				$word=mysqli_fetch_assoc($query);
 				echo "<li>".$word['word']."</li>";
 			}
 			echo "</ul>";

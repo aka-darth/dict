@@ -27,7 +27,7 @@ if($_POST['name']){
 	function show(id){
 		//Здесь надо написать козырную аякс функцию(и передавать туда статус)
 		var xhr=new XMLHttpRequest();
-		xhr.open('GET',"http://shcoding.esy.es/dict/lang_show.php?id="+id);
+		xhr.open('GET',"<?echo $config['path'];?>/lang_show.php?id="+id);
 		xhr.onreadystatechange=function(){
 			if(xhr.readyState==4){
 				if(xhr.responseText.trim()==",ok?"){

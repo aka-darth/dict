@@ -68,7 +68,7 @@ if($_POST['data']){
 						$query="INSERT INTO dt_W_".$user['id']." VALUES ('','".$postword1."','".$postlang1."','0','','0','0','".$word1['id']."')";
 						$query=mysqli_query($mysqli,$query);
 						if($debug)echo mysqli_error($mysqli);
-						$id=mysqli_insert_id($query);
+						$id=mysqli_insert_id($mysqli);
 						mysqli_query($mysqli,"UPDATE dt_W_".$user['id']." SET target='".$word1['target'].",".$id."' WHERE id=".$word1['id']);
 						if($debug)echo mysqli_error($mysqli); 
 					}

@@ -46,7 +46,7 @@ if($postword1 and $postword2){
 			if($debug) echo "Одно словo в базе<br>";
 			if($word1['word']==$postword1){
 				//echo "В базе первое слово:".$word1['word']."=".$postword1."<br>";
-				$query="INSERT INTO dt_W_".$user['id']." VALUES ('','".$postword2."','".$_POST['lang2']."','0','','0','0','".$word1['id']."')";
+				$query="INSERT INTO dt_W_".$user['id']." VALUES ('','".$postword2."','".$_POST['lang2']."','0',NOW(),'0','0','".$word1['id']."')";
 				mysqli_query($mysqli,$query);
 				if($debug) echo mysqli_error($mysqli);
 				$id=mysqli_insert_id($mysqli);
@@ -54,7 +54,7 @@ if($postword1 and $postword2){
 				echo mysqli_error($mysqli);  
 			}else{
 				//echo "В базе второе слово:".$word1['word']."=".$postword2."<br>";
-				$query="INSERT INTO dt_W_".$user['id']." VALUES ('','".$postword1."','".$_POST['lang1']."','0','','0','0','".$word1['id']."')";
+				$query="INSERT INTO dt_W_".$user['id']." VALUES ('','".$postword1."','".$_POST['lang1']."','0',NOW(),'0','0','".$word1['id']."')";
 				mysqli_query($mysqli,$query);
 				if($debug) echo mysqli_error($mysqli);
 				$id=mysqli_insert_id($mysqli);
@@ -64,18 +64,18 @@ if($postword1 and $postword2){
 		}
 	}else{
 		if($debug) echo "Ни одного слова в базе";
-		$query="INSERT INTO dt_W_".$user['id']." VALUES ('','".$postword1."','".$_POST['lang1']."','0','','0','0','')";
+		$query="INSERT INTO dt_W_".$user['id']." VALUES ('','".$postword1."','".$_POST['lang1']."','0',NOW(),'0','0','')";
 		$query=mysqli_query($mysqli,$query);
 		if($debug) echo mysqli_error($mysqli);  
 
-		$id=mysqli_insert_id($query);
+		$id=mysqli_insert_id($mysqli);
 			
-		$query="INSERT INTO dt_W_".$user['id']." VALUES ('','".$postword2."','".$_POST['lang2']."','0','','0','0','".$id."')";
+		$query="INSERT INTO dt_W_".$user['id']." VALUES ('','".$postword2."','".$_POST['lang2']."','0',NOW(),'0','0','".$id."')";
 		mysqli_query($mysqli,$query);
 		if($debug) echo mysqli_error($mysqli);  
 
 
-		mysqli_query($mysqli,"UPDATE dt_W_".$user['id']." SET target='".mysqli_insert_id($query)."' WHERE id=".$id);
+		mysqli_query($mysqli,"UPDATE dt_W_".$user['id']." SET target='".mysqli_insert_id($mysqli)."' WHERE id=".$id);
 		if($debug) echo mysqli_error($mysqli);  
 	}
 	//echo "<META HTTP-EQUIV=REFRESH CONTENT='0;URL=".$_SERVER['HTTP_REFERER']."'>";

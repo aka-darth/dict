@@ -1,6 +1,6 @@
 ﻿<?
 //Debug mode on/off
-$debug=false;
+$debug=$_COOKIE['debug']||false;
 
 //Simple mode
 $simple=false;

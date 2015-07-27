@@ -47,7 +47,7 @@ while($_POST["id".$i]){
 		$targets=explode(",",$word['target']);
 		if(in_array($_POST["id".$i],$targets)){//Правильный перевод
 			$right++;
-			echo "<br><p style='color:#a99;font-size:16px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
+			echo "<p style='color:#a99;font-size:16px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
 			mysqli_query($mysqli,"UPDATE dt_W_".$user["id"]." SET success=".($success+1).",status=".($now+1)." WHERE id=".$_POST["id".$i]);
 			if(count($keytargets)>1){
 				$end_time+=3;
@@ -60,7 +60,7 @@ while($_POST["id".$i]){
 				echo "</ul>";
 			}
 		}else{//Неравильный перевод, введено неправильное слово,которое однако есть в базе..
-			echo "<br><p style='color:#f90;font-size:20px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
+			echo "<p style='color:#f90;font-size:20px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
 			$end_time+=3;
 			mysqli_query($mysqli,"UPDATE dt_W_".$user["id"]." SET status=0 WHERE id=".$keyword_id);
 			echo "Доступные варианты - <br><ul class='transes'>";
@@ -168,7 +168,7 @@ while($_POST["id".$i]){
 					echo "</ul>";
 				}
 			}else{//Неравильный перевод, введено неправильное слово,которое однако есть в базе..
-				echo "<br><p style='color:#f00;font-size:20px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
+				echo "<p style='color:#f00;font-size:20px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
 				$end_time+=3;
 				mysqli_query($mysqli,"UPDATE dt_W_".$user["id"]." SET status=0 WHERE id=".$keyword["id"]);
 				echo "Доступные варианты - <br><ul class='transes'>";
@@ -181,7 +181,7 @@ while($_POST["id".$i]){
 				$may_add=true;
 			}
 		}else{//Самый провальный вариант
-			echo "<br><p style='color:#f00;font-size:20px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
+			echo "<p style='color:#f00;font-size:20px;font-weight:bold;'>".$keyword." : ".$_POST['word'.$i]."</p>";
 			$end_time+=3;
 			echo "Доступные варианты - <br><ul class='transes'>";
 			mysqli_query($mysqli,"UPDATE dt_W_".$user["id"]." SET status=0 WHERE id=".$keyword_id);
@@ -212,8 +212,8 @@ while($_POST["id".$i]){
 <script>
 	end_time=<?=$end_time;?>;
 	time=0;
-	document.cookie="total=<?echo $total;?>";
-	document.cookie="right=<?echo $right;?>";
+	document.cookie="total=<?echo $total;?>;";
+	document.cookie="right=<?echo $right;?>;";
 	go=setInterval(function(){
 		time++;
 		if(time>end_time){

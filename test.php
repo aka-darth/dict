@@ -2,7 +2,7 @@
 $page="check";
 $title="Словарь: проверка";
 include "top.php";
-if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
+if($_GET['limit'] or $_GET['limit']=="0"){$limit=intval($_GET['limit']);}else{$limit=1;}
 ?>
 <script>
 	function save_parameter(){
@@ -53,8 +53,8 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
 		var shiftY=elem.getBoundingClientRect().top-e.clientY;
 		
 		d_c.firstChild.nodeValue=elem.firstChild.nodeValue;
-		d_c.style.top=e.clientY;
-		d_c.style.left=e.clientX;
+		d_c.style.top=e.pageY+shiftY;
+		d_c.style.left=e.pageX+shiftX;
 		d_c.style.color = 'black';
 		d_c.style.position="absolute";
 		d_c.style.display='block';
@@ -158,7 +158,7 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
 	</tr>
 			<?
 			if($_GET['word']){//Возможность получить определённое слово по id
-				$query='SELECT id,word FROM dt_W_'.$user['id'].' WHERE id='.$_GET['word'];				
+				$query='SELECT id,word FROM dt_W_'.$user['id'].' WHERE id='.intval($_GET['word']);				
 			}else{
 				if(($_GET['lang'] or $_GET['lang']==="0") or (!$limit or $limit<16)){
 					$what='SELECT t1.id,t1.word,t1.status';
@@ -168,7 +168,7 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=$_GET['limit'];}else{$limit=1;}
 					$where='((t1.last_attempt < (NOW() - INTERVAL 200 MINUTE) AND t1.status<4) OR (t1.last_attempt < (NOW() - INTERVAL (t1.status*15+1) DAY)))';
 					$where.=" AND lang.showlang=1";
 					if($_GET['lang'] or $_GET['lang']==="0"){
-						$where.=" AND lang=".$_GET['lang'];
+						$where.=" AND lang=".intval($_GET['lang']);
 					}
 					if($_GET['eazy'] =="true"){
 						$order.=" ORDER BY status DESC";

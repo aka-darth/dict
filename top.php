@@ -1,4 +1,4 @@
-﻿<?include "config.php";
+<?include "config.php";
 include "login.php";
 if($user){
 	$query=mysqli_query($mysqli,"SELECT * FROM dt_lang_".$user['id']);

@@ -25,7 +25,6 @@ if($_POST['name']){
 ?>
 <script>
 	function show(id){
-		//Здесь надо написать козырную аякс функцию(и передавать туда статус)
 		var xhr=new XMLHttpRequest();
 		xhr.open('GET',"<?echo $config['path'];?>/lang_show.php?id="+id);
 		xhr.onreadystatechange=function(){
@@ -37,7 +36,6 @@ if($_POST['name']){
 			}
         }
 		xhr.send();
-//		document.location.href="http://shcoding.esy.es/dict/lang_show.php?id="+id;
 	}
 </script>
 <table>

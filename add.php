@@ -90,6 +90,6 @@ if($postword1 and $postword2){
 <?}else{?>
 <script>
 	//history.go(-1);
-	document.location.href='<?echo $_SERVER['HTTP_REFERER']?>';
+	document.location.href='<?if($_POST['back']){echo $_POST['back'];}else{echo $_SERVER['HTTP_REFERER'];}?>';
 </script>
 <?}?>

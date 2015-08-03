@@ -147,7 +147,7 @@ while($_POST["id".$i]){
 		$translit=strtr(strtolower($_POST['word'.$i]),$trans);
 		$qu="SELECT * FROM dt_W_".$user["id"]." WHERE word LIKE '".$translit."'";
 		if($_POST['to'] or $_POST['to']==="0"){
-			$qu.=" AND lang=".$_POST['to'];
+			$qu.=" AND lang=".intval($_POST['to']);
 		}
 		$qu=mysqli_query($mysqli,$qu);
 		if($word=mysqli_fetch_assoc($qu)){
@@ -196,6 +196,7 @@ while($_POST["id".$i]){
 	}
 	if($may_add){?>
 		<form action="add.php" method="post">
+			<input type="hidden" name="back" value="<?echo $_SERVER['HTTP_REFERER'];?>">
 			<input type="hidden" name="lang1" value="<?echo $lang;?>">
 			<input type="hidden" name="lang2" value="<?echo $_POST['to'];?>">
 			<input type="hidden" name="word1" value="<?echo $keyword;?>">
@@ -210,7 +211,7 @@ while($_POST["id".$i]){
 <input type="button" value="Остаться" onclick="clearTimeout(go);document.getElementById('timer').firstChild.nodeValue='';this.style.display='none';">
 <input type="button" onclick="document.location.href='<?echo $_SERVER['HTTP_REFERER'];?>'" autofocus value="Дальше">
 <script>
-	end_time=<?=$end_time;?>;
+	end_time=<?echo $end_time;?>;
 	time=0;
 	document.cookie="total=<?echo $total;?>;";
 	document.cookie="right=<?echo $right;?>;";
@@ -224,6 +225,19 @@ while($_POST["id".$i]){
 	},1000);
 	function choose_lang(){
 		
+	}
+	function add(){
+		var xhr=new XMLHttpRequest();
+		xhr.open('GET',"<?echo $config['path'];?>/add.php");
+		xhr.onreadystatechange=function(){
+			if(xhr.readyState==4){
+				if(xhr.responseText.trim()==",ok?"){
+				}else{
+					console.log(xhr.responseText);
+				}
+			}
+		}
+		xhr.send();
 	}
 </script>
 </body>

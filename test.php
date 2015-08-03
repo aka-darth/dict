@@ -58,7 +58,6 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=intval($_GET['limit']);}else{$l
 		d_c.style.color = 'black';
 		d_c.style.position="absolute";
 		d_c.style.display='block';
-//			alert(shiftX+' '+shiftY);
 		document.ondragstart=function(){return false;}
 		if(touch){
 			document.addEventListener('touchmove',function(event){
@@ -165,7 +164,7 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=intval($_GET['limit']);}else{$l
 					$what.=',t1.last_attempt,t1.lang ';
 					$from='FROM dt_W_'.$user['id'].' t1 JOIN dt_lang_'.$user['id'].' lang ON t1.lang=lang.id WHERE ';
 					//		   (время последней попытки меньше чем сейчас минус час И    статус<4) или(время последней попытки меньше чем сейчас минус )
-					$where='((t1.last_attempt < (NOW() - INTERVAL 200 MINUTE) AND t1.status<4) OR (t1.last_attempt < (NOW() - INTERVAL (t1.status*15+1) DAY)))';
+					$where='((t1.last_attempt < (NOW() - INTERVAL 1 DAY) AND t1.status<4) OR (t1.last_attempt < (NOW() - INTERVAL (t1.status*15+1) DAY)))';
 					$where.=" AND lang.showlang=1";
 					if($_GET['lang'] or $_GET['lang']==="0"){
 						$where.=" AND lang=".intval($_GET['lang']);
@@ -190,9 +189,9 @@ if($_GET['limit'] or $_GET['limit']=="0"){$limit=intval($_GET['limit']);}else{$l
 					WHERE
 					lang1.showlang=1 AND
 					lang2.showlang=1 AND
-					((t1.last_attempt < (NOW() - INTERVAL 200 MINUTE) AND t1.status<4) OR (t1.last_attempt < (NOW() - INTERVAL 215 DAY)))
+					((t1.last_attempt < (NOW() - INTERVAL 1 DAY) AND t1.status<4) OR (t1.last_attempt < (NOW() - INTERVAL (t1.status*5+1) DAY)))
 					AND
-					((t2.last_attempt < (NOW() - INTERVAL 200 MINUTE) AND t2.status<4) OR (t2.last_attempt < (NOW() - INTERVAL 215 DAY)))
+					((t2.last_attempt < (NOW() - INTERVAL 1 DAY) AND t2.status<4) OR (t2.last_attempt < (NOW() - INTERVAL (t2.status*5+1) DAY)))
 					';
 					if($_GET['eazy'] =="true"){
 						$query.=" ORDER BY t1.status+t2.status DESC";

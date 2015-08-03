@@ -61,7 +61,7 @@ if($_GET['active']){
 				$query=$s_query." 1=1";
 				$total=mysqli_num_rows(mysqli_query($mysqli,$query));
 				
-				$query=$s_query.'(( (t1.last_attempt <( NOW() - INTERVAL 200 MINUTE )) AND t1.status<4) OR  (t1.last_attempt < ( NOW() - INTERVAL (t1.status*15+1) DAY )))';
+				$query=$s_query.'(( (t1.last_attempt <( NOW() - INTERVAL 1 DAY)) AND t1.status<4) OR  (t1.last_attempt < ( NOW() - INTERVAL (t1.status*15+1) DAY )))';
 				$active=mysqli_num_rows(mysqli_query($mysqli,$query));
 
 				/*
